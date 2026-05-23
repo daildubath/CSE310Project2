@@ -1,6 +1,6 @@
 # Project Title (Update)
 
-Connect 4 built with classes, including a PC player option.
+Connect 4 built with classes, including a PC player option with basic logic.
 
 ## Instructions for Build and Use
 
