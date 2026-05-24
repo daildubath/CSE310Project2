@@ -2,6 +2,7 @@
 #define BOARD_H
 
 #include <vector>
+#include <string>
 
 class Board {
 private:
@@ -17,6 +18,7 @@ public:
     bool checkWin(int last_x, int last_y, char token) const;
     //Added, and hopeful logic
     bool isWinningMove(int col, char token) const;
+    void clearBoardAnimation(const std::string& winnerName);
 };
 
 #endif

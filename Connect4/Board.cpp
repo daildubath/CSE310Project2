@@ -123,3 +123,63 @@ bool Board::isWinningMove(int col, char token) const
     }
     return false;
 }
+
+void Board::clearBoardAnimation(const std::string& winnerName) {
+    // We loop for 'rows + 1' to guarantee the top piece falls completely through the trapdoor
+    for (int frame = 0; frame <= rows; ++frame) {
+
+        // 1. Capture the bottom row into the trapdoor BEFORE gravity hits
+        std::vector<char> trapdoorRow(cols);
+        for (int x = 0; x < cols; ++x) {
+            trapdoorRow[x] = grid[x][rows - 1];
+        }
+
+        // 2. Gravity Math: Shift every piece down one row
+        for (int x = 0; x < cols; ++x) {
+            for (int y = rows - 1; y > 0; --y) {
+                grid[x][y] = grid[x][y - 1];
+            }
+            grid[x][0] = ' '; // The top row becomes empty
+        }
+
+        // 3. Clear the screen for the new frame
+        std::cout << "\x1B[2J\x1B[H";
+
+        // 4. Draw the main board
+        std::cout << "-----------------------------\n";
+        for (int y = 0; y < rows; ++y) {
+            std::cout << "| ";
+            for (int x = 0; x < cols; ++x) {
+                std::cout << grid[x][y] << " | ";
+            }
+            std::cout << "\n-----------------------------\n";
+        }
+
+        // --- 5. OPEN THE TRAPDOOR! ---
+        std::cout << "||";
+        for (int x = 0; x < cols; ++x) {
+            // Print the pieces that just fell into the trapdoor!
+            if (x < cols - 1) {
+                std::cout << trapdoorRow[x] << "   ";
+            } else {
+                std::cout << trapdoorRow[x] << " ||\n";
+            }
+        }
+
+        // (Added exactly 1 space here to perfectly align it with the 30-character top board)
+        std::cout << "^^                          ^^\n";
+
+        // 6. Redraw the winner banner underneath so it stays on screen
+        std::cout << "\n========================================\n";
+        std::cout << "   🏆 " << winnerName << " WINS THE GAME! 🏆\n";
+        std::cout << "========================================\n\n";
+
+        std::cout << std::flush;
+
+        // Control the speed of the falling pieces
+        std::this_thread::sleep_for(std::chrono::milliseconds(150));
+    }
+
+    // Give the user one extra second to admire the completely empty board
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+}
